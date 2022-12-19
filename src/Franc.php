@@ -2,7 +2,7 @@
 
 namespace Jack\Tdd;
 
-class Dollar
+class Franc
 {
     private int $amount;
 
@@ -11,14 +11,14 @@ class Dollar
         $this->amount = $amount;
     }
 
-    public function times(int $multiplier) : Dollar
+    public function times(int $multiplier) : Franc
     {
         return new self($this->amount * $multiplier);
     }
 
-    public function equals(Dollar $dollar) : bool
+    public function equals(Franc $franc) : bool
     {
-        return $dollar->amount === $this->amount;
+        return $franc->amount === $this->amount;
     }
 
 }
