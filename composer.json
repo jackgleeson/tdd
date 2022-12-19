@@ -1,0 +1,18 @@
+{
+    "name": "jack/tdd",
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "rector/rector": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jack\\Tdd\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "jgleeson",
+            "email": "jgleeson@wikimedia.org"
+        }
+    ]
+}
