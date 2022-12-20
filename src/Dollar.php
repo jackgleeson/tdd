@@ -2,9 +2,8 @@
 
 namespace Jack\Tdd;
 
-class Dollar
+class Dollar extends Money
 {
-    private int $amount;
 
     public function __construct(int $amount)
     {
@@ -15,10 +14,4 @@ class Dollar
     {
         return new self($this->amount * $multiplier);
     }
-
-    public function equals(Dollar $dollar) : bool
-    {
-        return $dollar->amount === $this->amount;
-    }
-
 }
