@@ -54,8 +54,10 @@ class MoneyTest extends TestCase
         $this->assertEquals(Money::Dollar(7), $result);
     }
 
-    public function testReduceMoney()
+    public function testReduceMoney(): void
     {
-        $this->markTestIncomplete();
+        $bank = new Bank();
+        $result = $bank->reduce(Money::Dollar(1), "USD");
+        $this->assertEquals(Money::Dollar(1), $result);
     }
 }
