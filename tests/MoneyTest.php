@@ -64,13 +64,19 @@ class MoneyTest extends TestCase
     public function testReduceMoneyDifferentCurrency(): void
     {
         $bank = new Bank();
-//        $bank->addRate("CHF", "USD", 2);
+        $bank->addRate("CHF", "USD", 2);
         $result = $bank->reduce(Money::Franc(2), "USD");
         $this->assertEquals(Money::Dollar(1), $result);
     }
 
     public function testArrayEquals(): void
     {
+        // this doesn't work in java apparently
         $this->assertEquals((object) ['abc'], (object) ['abc']);
+    }
+
+    public function testIdentityRate(): void
+    {
+        $this->assertEquals(1, (new Bank())->rate("USD", "USD"));
     }
 }
