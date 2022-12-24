@@ -37,17 +37,17 @@ class Money implements Expression
         return new self($amount, "CHF");
     }
 
-    public function times(int $multiplier): Money
+    public function times(int $multiplier): Expression
     {
         return new self($this->amount * $multiplier, $this->currency());
     }
 
-    public function plus(Money $addend): Sum
+    public function plus(Expression $addend): Expression
     {
         return new Sum($this, $addend);
     }
 
-    public function reduce(Bank $bank, string $to): Money
+    public function convert(Bank $bank, string $to): Money
     {
         $rate = $bank->rate($this->currency(), $to);
         return new Money($this->amount / $rate, $to);

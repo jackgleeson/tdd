@@ -33,7 +33,7 @@ class MoneyTest extends TestCase
         $five = Money::Dollar(5);
         $sum = $five->plus($five);
         $bank = new Bank();
-        $reduced = $bank->reduce($sum, "USD");
+        $reduced = $bank->convert($sum, "USD");
         $this->assertEquals(Money::Dollar(10), $reduced);
     }
 
@@ -46,26 +46,26 @@ class MoneyTest extends TestCase
         $this->assertEquals($five, $sum->addend);
     }
 
-    public function testReduceSum() : void
+    public function testConvertSum() : void
     {
         $sum = new Sum(Money::Dollar(3), Money::Dollar(4));
         $bank = new Bank();
-        $result = $bank->reduce($sum, "USD");
+        $result = $bank->convert($sum, "USD");
         $this->assertEquals(Money::Dollar(7), $result);
     }
 
-    public function testReduceMoney(): void
+    public function testConvertMoney(): void
     {
         $bank = new Bank();
-        $result = $bank->reduce(Money::Dollar(1), "USD");
+        $result = $bank->convert(Money::Dollar(1), "USD");
         $this->assertEquals(Money::Dollar(1), $result);
     }
 
-    public function testReduceMoneyDifferentCurrency(): void
+    public function testConvertMoneyDifferentCurrency(): void
     {
         $bank = new Bank();
         $bank->addRate("CHF", "USD", 2);
-        $result = $bank->reduce(Money::Franc(2), "USD");
+        $result = $bank->convert(Money::Franc(2), "USD");
         $this->assertEquals(Money::Dollar(1), $result);
     }
 
@@ -77,6 +77,48 @@ class MoneyTest extends TestCase
 
     public function testIdentityRate(): void
     {
-        $this->assertEquals(1, (new Bank())->rate("USD", "USD"));
+        $bank = new Bank();
+        $this->assertEquals(1, $bank->rate("USD", "USD"));
+    }
+
+    public function testMixedAddition(): void
+    {
+        $fiveBucks = Money::Dollar(5);
+        $tenFrancs = Money::Franc(10);
+        $bank = new Bank();
+        $bank->addRate("CHF", "USD", 2);
+        $result = $bank->convert($fiveBucks->plus($tenFrancs), "USD");
+        $this->assertEquals(Money::Dollar(10), $result);
+    }
+
+    public function testSumPlusMoney(): void
+    {
+        $fiveBucks = Money::Dollar(5);
+        $tenFrancs = Money::Franc(10);
+        $bank = new Bank();
+        $bank->addRate("CHF", "USD", 2);
+        $sum = (new Sum($fiveBucks, $tenFrancs))->plus($fiveBucks);
+        $result = $bank->convert($sum, "USD");
+        $this->assertEquals(Money::Dollar(15), $result);
+    }
+
+    public function testSumTimes(): void
+    {
+        $fiveBucks = Money::Dollar(5);
+        $tenFrancs = Money::Franc(10);
+        $bank = new Bank();
+        $bank->addRate("CHF", "USD", 2);
+        $sum = (new Sum($fiveBucks, $tenFrancs))->times(2);
+        $result = $bank->convert($sum, "USD");
+        $this->assertEquals(Money::Dollar(20), $result);
+        
+    }
+
+    public function testPlusSameCurrencyReturnsMoney(): void
+    {
+        $sum = Money::Dollar(1)->plus(Money::Dollar(1));
+        $result = $sum->convert(new Bank(), "USD");
+        $this->assertEquals(Money::Dollar(2), $result);
+        $this->assertInstanceOf(Money::class, $result);
     }
 }

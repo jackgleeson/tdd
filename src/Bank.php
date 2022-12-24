@@ -7,9 +7,9 @@ class Bank
 
     private array $rates = [];
 
-    public function reduce(Expression $source, string $to): Money
+    public function convert(Expression $source, string $to): Money
     {
-        return $source->reduce($this, $to);
+        return $source->convert($this, $to);
     }
 
     public function rate(string $from, string $to): int
