@@ -33,7 +33,7 @@ class MoneyTest extends TestCase
         $five = Money::Dollar(5);
         $sum = $five->plus($five);
         $bank = new Bank();
-        $reduced = $bank->convert($sum, "USD");
+        $reduced = $bank->reduce($sum, "USD");
         $this->assertEquals(Money::Dollar(10), $reduced);
     }
 
@@ -46,26 +46,26 @@ class MoneyTest extends TestCase
         $this->assertEquals($five, $sum->addend);
     }
 
-    public function testConvertSum() : void
+    public function testReduceSum() : void
     {
         $sum = new Sum(Money::Dollar(3), Money::Dollar(4));
         $bank = new Bank();
-        $result = $bank->convert($sum, "USD");
+        $result = $bank->reduce($sum, "USD");
         $this->assertEquals(Money::Dollar(7), $result);
     }
 
-    public function testConvertMoney(): void
+    public function testReduceMoney(): void
     {
         $bank = new Bank();
-        $result = $bank->convert(Money::Dollar(1), "USD");
+        $result = $bank->reduce(Money::Dollar(1), "USD");
         $this->assertEquals(Money::Dollar(1), $result);
     }
 
-    public function testConvertMoneyDifferentCurrency(): void
+    public function testReduceMoneyDifferentCurrency(): void
     {
         $bank = new Bank();
         $bank->addRate("CHF", "USD", 2);
-        $result = $bank->convert(Money::Franc(2), "USD");
+        $result = $bank->reduce(Money::Franc(2), "USD");
         $this->assertEquals(Money::Dollar(1), $result);
     }
 
@@ -87,7 +87,7 @@ class MoneyTest extends TestCase
         $tenFrancs = Money::Franc(10);
         $bank = new Bank();
         $bank->addRate("CHF", "USD", 2);
-        $result = $bank->convert($fiveBucks->plus($tenFrancs), "USD");
+        $result = $bank->reduce($fiveBucks->plus($tenFrancs), "USD");
         $this->assertEquals(Money::Dollar(10), $result);
     }
 
@@ -98,7 +98,7 @@ class MoneyTest extends TestCase
         $bank = new Bank();
         $bank->addRate("CHF", "USD", 2);
         $sum = (new Sum($fiveBucks, $tenFrancs))->plus($fiveBucks);
-        $result = $bank->convert($sum, "USD");
+        $result = $bank->reduce($sum, "USD");
         $this->assertEquals(Money::Dollar(15), $result);
     }
 
@@ -109,7 +109,7 @@ class MoneyTest extends TestCase
         $bank = new Bank();
         $bank->addRate("CHF", "USD", 2);
         $sum = (new Sum($fiveBucks, $tenFrancs))->times(2);
-        $result = $bank->convert($sum, "USD");
+        $result = $bank->reduce($sum, "USD");
         $this->assertEquals(Money::Dollar(20), $result);
         
     }
@@ -117,8 +117,24 @@ class MoneyTest extends TestCase
     public function testPlusSameCurrencyReturnsMoney(): void
     {
         $sum = Money::Dollar(1)->plus(Money::Dollar(1));
-        $result = $sum->convert(new Bank(), "USD");
+        $result = $sum->reduce(new Bank(), "USD");
         $this->assertEquals(Money::Dollar(2), $result);
         $this->assertInstanceOf(Money::class, $result);
+    }
+
+    public function testBritishPoundMoney(): void
+    {
+        $fiveQuid = Money::Pound(5);
+        $this->assertEquals(5, $fiveQuid->amount);
+        $this->assertEquals("GBP", $fiveQuid->currency());
+    }
+
+    public function testDollarToBritishPound(): void
+    {
+        $tenDollars = Money::Dollar(10);
+        $bank = new Bank();
+        $bank->addRate("USD", "GBP", 2);
+        $converted = $bank->reduce($tenDollars, "GBP");
+        $this->assertEquals(Money::Pound(5), $converted);
     }
 }

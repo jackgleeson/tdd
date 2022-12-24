@@ -15,10 +15,10 @@ class Sum implements Expression
         $this->addend = $added;
     }
 
-    public function convert(Bank $bank, string $to) : Money
+    public function reduce(Bank $bank, string $to) : Money
     {
-        $augend_reduce = $this->augend->convert($bank, $to)->amount;
-        $addend_reduce = $this->addend->convert($bank, $to)->amount;
+        $augend_reduce = $this->augend->reduce($bank, $to)->amount;
+        $addend_reduce = $this->addend->reduce($bank, $to)->amount;
         $amount = $augend_reduce + $addend_reduce;
         return new Money($amount, $to);
     }
