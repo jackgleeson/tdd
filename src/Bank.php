@@ -24,4 +24,5 @@ class Bank
     {
         $this->rates[$from . "_" . $to] = $rate;
     }
+
 }

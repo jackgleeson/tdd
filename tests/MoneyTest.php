@@ -15,6 +15,12 @@ class MoneyTest extends TestCase
         $this->assertEquals(Money::Dollar(15), $five->times(3));
     }
 
+    public function testThisIsATest()
+    {
+        $ten = Money::Pound(10);
+        $this->assertEquals(Money::Pound(20), $ten->times(2));
+    }
+
     public function testEquality() : void
     {
         $this->assertTrue(Money::Dollar(5)->equals(Money::Dollar(5)));
@@ -136,5 +142,12 @@ class MoneyTest extends TestCase
         $bank->addRate("USD", "GBP", 2);
         $converted = $bank->reduce($tenDollars, "GBP");
         $this->assertEquals(Money::Pound(5), $converted);
+    }
+
+    public function testAdd()
+    {
+        $money = Money::Dollar(5);
+        $result = $money->add(Money::Dollar(5));
+        $this->assertEquals(10, $result->amount);
     }
 }

@@ -22,6 +22,11 @@ class Money implements Expression
         return $this->currency;
     }
 
+    public function add(Money $addend): Money
+    {
+        return new self($this->amount + $addend->amount, $this->currency());
+    }
+
     public function equals(Money $money): bool
     {
         $amountMatches = $money->amount === $this->amount;
